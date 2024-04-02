@@ -12,41 +12,49 @@ OpenAIClient client = new(new Uri(settings.APIEndpoint), new AzureKeyCredential(
 // Create the agent
 GPTAgent agent = new(settings, client);
 
+async static Task ProcessInput(GPTAgent agent, string input)
+{
+    Console.WriteLine($"user:\n{input}");
+
+    string selectedIntent = await SemanticIntent.GetIntent(agent, input);
+    Console.WriteLine($"intent:\n{selectedIntent}");
+
+    string result;
+    ChatCompletionsFunctionToolDefinition tool;
+    FunctionDelegate del = ToolFunctions.GetToolCallResponseMessage;
+
+    if (selectedIntent == SemanticIntent.IntentList.GetWeather.ToString())
+    {
+        tool = ToolFunctions.getWeatherTool;
+        result = await agent.ProcessPromptAsync(input, 100, 0.3f, [tool], del);
+    }
+    else if (selectedIntent == SemanticIntent.IntentList.CityNickName.ToString())
+    {
+        tool = ToolFunctions.getCityNicknameTool;
+        del = ToolFunctions.GetToolCallResponseMessage;
+        result = await agent.ProcessPromptAsync(input, 100, 0.3f, [tool], del);
+    }
+    else
+    {
+        result = await agent.ProcessPromptAsync(input, 100, 0.2f);
+    }
+    Console.WriteLine($"agent:\n{result}\n");
+}
+
+// Process user inputs based on intents
 var input = "What is the speed of light?";
-string intent = await SemanticIntent.GetIntent(agent, input);
+await ProcessInput(agent, input);
 
-Console.WriteLine($"user:\n{input}");
-if (intent == SemanticIntent.IntentList.Unknown.ToString())
-{
-    Console.WriteLine($"intent:\n{intent}");
-    var result = await agent.ProcessPromptAsync(input, 100, 0.2f);
-    Console.WriteLine($"assistant:\n{result}\n");
-}
-
-// Get the user's intent
 input = "What is the weather in San Francisco?";
-intent = await SemanticIntent.GetIntent(agent, input);
+await ProcessInput(agent, input);
 
-// if the intent is to get the weather, process the message with the weather tool
-Console.WriteLine($"user:\n{input}");
-if (intent == SemanticIntent.IntentList.GetWeather.ToString())
-{
-    Console.WriteLine($"intent:\n{intent}");
-    var weatherTool = ToolFunctions.getWeatherTool;
-    var result = await agent.ProcessPromptAsync(input, 100, 0.3f, [weatherTool], ToolFunctions.GetToolCallResponseMessage);
-    Console.WriteLine($"assistant:\n{result}\n");
-}
-
-// Get the user's intent
 input = "What is the nick name for Seattle, WA?";
-intent = await SemanticIntent.GetIntent(agent, input);
+await ProcessInput(agent, input);
 
-// If the intent is to get the city's nickname, process the message with the city nickname tool
-Console.WriteLine($"user:\n{input}");
-if (intent == SemanticIntent.IntentList.CityNickName.ToString())
-{
-    Console.WriteLine($"intent:\n{intent}");
-    var cityTool = ToolFunctions.getCityNicknameTool;
-    var result = await agent.ProcessPromptAsync(input, 100, 0.3f, [cityTool], ToolFunctions.GetToolCallResponseMessage);
-    Console.WriteLine($"assistant:\n{result}\n");
-}
+// Combine two or more tools in a single call
+input = "What is the weather in San Francisco? What is the nick name for Seattle, WA?";
+var result1 = await agent.ProcessPromptAsync(input, 100, 0.3f,
+    [ToolFunctions.getWeatherTool, ToolFunctions.getCityNicknameTool],
+    ToolFunctions.GetToolCallResponseMessage);
+Console.WriteLine($"agent:\n{result1}\n");
+
