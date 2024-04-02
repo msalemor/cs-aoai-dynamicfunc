@@ -1,10 +1,13 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Azure.AI.OpenAI;
 
 namespace functions;
 
 public static class ToolFunctions
 {
+    record ToolParam([property: JsonPropertyName("location")] string Location);
+
     public static ChatCompletionsFunctionToolDefinition getCityNicknameTool = new()
     {
         Name = "getCityNickname",
@@ -95,26 +98,27 @@ public static class ToolFunctions
         if (functionToolCall?.Name == "get_current_weather")
         {
             // Validate and process the JSON arguments for the function call
-            string jsonData = functionToolCall.Arguments;
-            var location = JsonSerializer.Deserialize<ToolParam>(jsonData) ?? new ToolParam(location: "");
-            var temperature = GetWeather(location.location); // GetYourFunctionResultData(unvalidatedArguments);
+            string jsonArgumentList = functionToolCall.Arguments;
+            var location = JsonSerializer.Deserialize<ToolParam>(jsonArgumentList) ?? new ToolParam(Location: "");
+            var temperature = GetWeather(location.Location); // GetYourFunctionResultData(unvalidatedArguments);
             var functionResultData = $"{temperature}F";
             return new ChatRequestToolMessage(functionResultData.ToString(), toolCall.Id);
         }
         else if (functionToolCall?.Name == "getCityNickname")
         {
             // Validate and process the JSON arguments for the function call
-            string jsonData = functionToolCall.Arguments;
-            var location = JsonSerializer.Deserialize<ToolParam>(jsonData) ?? new ToolParam(location: "");
-            var functionResultData = GetCityNickname(location.location); // GetYourFunctionResultData(unvalidatedArguments);
+            string jsonArgumentList = functionToolCall.Arguments;
+            var location = JsonSerializer.Deserialize<ToolParam>(jsonArgumentList) ?? new ToolParam(Location: "");
+            var functionResultData = GetCityNickname(location.Location); // GetYourFunctionResultData(unvalidatedArguments);
             return new ChatRequestToolMessage(functionResultData.ToString(), toolCall.Id);
         }
         else
         {
             // Handle other or unexpected calls
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return new ChatRequestToolMessage("Function was not implemented", toolCall.Id);
         }
     }
 
-    record ToolParam(string location);
+
 }
