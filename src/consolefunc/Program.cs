@@ -21,18 +21,18 @@ async static Task ProcessInput(GPTAgent agent, string input)
 
     string result;
     ChatCompletionsFunctionToolDefinition tool;
-    FunctionDelegate del = ToolFunctions.GetToolCallResponseMessage;
+    FunctionDelegate processingDelegate = ToolFunctions.GetToolCallResponseMessage;
 
     if (selectedIntent == SemanticIntent.IntentList.GetWeather.ToString())
     {
         tool = ToolFunctions.getWeatherTool;
-        result = await agent.ProcessPromptAsync(input, 100, 0.3f, [tool], del);
+        result = await agent.ProcessPromptAsync(input, 100, 0.3f, [tool], processingDelegate);
     }
     else if (selectedIntent == SemanticIntent.IntentList.CityNickName.ToString())
     {
         tool = ToolFunctions.getCityNicknameTool;
-        del = ToolFunctions.GetToolCallResponseMessage;
-        result = await agent.ProcessPromptAsync(input, 100, 0.3f, [tool], del);
+        processingDelegate = ToolFunctions.GetToolCallResponseMessage;
+        result = await agent.ProcessPromptAsync(input, 100, 0.3f, [tool], processingDelegate);
     }
     else
     {
@@ -53,8 +53,13 @@ await ProcessInput(agent, input);
 
 // Combine two or more tools in a single call
 input = "What is the weather in San Francisco? What is the nick name for Seattle, WA?";
+
+List<ChatCompletionsFunctionToolDefinition> tools = [ToolFunctions.getWeatherTool, ToolFunctions.getCityNicknameTool];
+FunctionDelegate processingDelegate = ToolFunctions.GetToolCallResponseMessage;
+
 var result1 = await agent.ProcessPromptAsync(input, 100, 0.3f,
-    [ToolFunctions.getWeatherTool, ToolFunctions.getCityNicknameTool],
-    ToolFunctions.GetToolCallResponseMessage);
+    tools,
+    processingDelegate);
+
 Console.WriteLine($"agent:\n{result1}\n");
 
