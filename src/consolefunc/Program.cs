@@ -57,9 +57,7 @@ input = "What is the weather in San Francisco? What is the nick name for Seattle
 List<ChatCompletionsFunctionToolDefinition> tools = [ToolFunctions.getWeatherTool, ToolFunctions.getCityNicknameTool];
 FunctionDelegate processingDelegate = ToolFunctions.GetToolCallResponseMessage;
 
-var result1 = await agent.ProcessPromptAsync(input, 100, 0.3f,
-    tools,
-    processingDelegate);
+var result1 = await agent.ProcessPromptAsync(input, 100, 0.3f, tools, processingDelegate);
 
 Console.WriteLine($"agent:\n{result1}\n");
 
