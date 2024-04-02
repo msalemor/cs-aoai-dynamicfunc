@@ -60,12 +60,32 @@ public static class ToolFunctions
     public static string GetCityNickname(string location) => location switch
     {
         "Seattle, WA" => "The Emerald City",
+        "New York, NY" => "The Big Apple",
+        "San Francisco, CA" => "The Golden City",
+        "Los Angeles, CA" => "The City of Angels",
+        "Miami, FL" => "The Magic City",
+        "Chicago, IL" => "The Windy City",
+        "Boston, MA" => "Beantown",
+        "Portland, OR" => "The City of Roses",
+        "Austin, TX" => "The Live Music Capital of the World",
+        "Nashville, TN" => "Music City",
+        "New Orleans, LA" => "The Big Easy",
         _ => throw new NotImplementedException(),
     };
 
     public static int GetWeather(string location) => location switch
     {
         "San Francisco, CA" => Random.Shared.Next(40, 55),
+        "Miami, FL" => Random.Shared.Next(70, 85),
+        "New York, NY" => Random.Shared.Next(30, 45),
+        "Los Angeles, CA" => Random.Shared.Next(60, 75),
+        "Seattle, WA" => Random.Shared.Next(35, 50),
+        "Chicago, IL" => Random.Shared.Next(25, 40),
+        "Boston, MA" => Random.Shared.Next(30, 45),
+        "Portland, OR" => Random.Shared.Next(40, 55),
+        "Austin, TX" => Random.Shared.Next(50, 65),
+        "Nashville, TN" => Random.Shared.Next(45, 60),
+        "New Orleans, LA" => Random.Shared.Next(55, 70),
         _ => throw new NotImplementedException(),
     };
 
