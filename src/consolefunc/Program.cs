@@ -52,7 +52,7 @@ input = "What is the nick name for Seattle, WA?";
 await ProcessInput(agent, input);
 
 // Combine two or more tools in a GPT call
-input = "What is the weather in San Francisco? What is the nick name for Seattle, WA?";
+input = "What is the weather in New York? What is the nick name for Miami, FL?";
 
 List<ChatCompletionsFunctionToolDefinition> tools = [ToolFunctions.getWeatherTool, ToolFunctions.getCityNicknameTool];
 FunctionDelegate processingDelegate = ToolFunctions.GetToolCallResponseMessage;
