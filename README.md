@@ -2,6 +2,10 @@
 
 This is a sample console application leveraging Azure OpenAI C# SDK with making dynamic funciton calls with function defenitions and processing delegates.
 
+## Sample run
+
+![Picture showing the output of running this console application](images/cs-aoai-dynamic-loading.png)
+
 ## Processing signature
 
 - At processing time determine which function will be loaded and executed.
