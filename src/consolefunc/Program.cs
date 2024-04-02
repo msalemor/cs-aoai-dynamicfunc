@@ -41,7 +41,7 @@ async static Task ProcessInput(GPTAgent agent, string input)
     Console.WriteLine($"agent:\n{result}\n");
 }
 
-// Process user inputs based on intents
+// Select a function call based on the user's intent
 var input = "What is the speed of light?";
 await ProcessInput(agent, input);
 
@@ -51,7 +51,7 @@ await ProcessInput(agent, input);
 input = "What is the nick name for Seattle, WA?";
 await ProcessInput(agent, input);
 
-// Combine two or more tools in a GPT call
+// Combine two or more function calls in a single GPT call
 input = "What is the weather in New York? What is the nick name for Miami, FL?";
 
 List<ChatCompletionsFunctionToolDefinition> tools = [ToolFunctions.getWeatherTool, ToolFunctions.getCityNicknameTool];
